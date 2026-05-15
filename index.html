@@ -3,93 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N4 Kanji - 5 Sec Flashcard</title>
+    <title>JLPT N4 Kanji with Examples</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #1a1a2e;
+            font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+            background: #121212;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             color: white;
-            overflow: hidden;
         }
 
         #quiz-card {
-            background: #16213e;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            width: 85%;
-            max-width: 450px;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.7);
+            width: 90%;
+            max-width: 600px;
             text-align: center;
-            border: 3px solid #0f3460;
+            border: 1px solid #333;
         }
 
         .timer-bar-container {
             width: 100%;
-            height: 10px;
-            background: #0f3460;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            overflow: hidden;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
 
         #timer-bar {
             width: 100%;
             height: 100%;
-            background: #e94560;
+            background: #00d2ff;
             transition: width 1s linear;
         }
 
         .kanji-box {
-            font-size: 160px;
+            font-size: 140px;
             font-weight: bold;
             color: #f1c40f;
             margin-bottom: 10px;
         }
 
         .answer-area {
-            min-height: 130px;
+            min-height: 200px;
         }
 
         .hiragana {
-            font-size: 50px;
-            color: #4ee44e;
+            font-size: 40px;
+            color: #2ecc71;
             font-weight: bold;
             opacity: 0;
-            transition: opacity 0.3s ease-in;
         }
 
         .nepali {
-            font-size: 32px;
-            color: #ffffff;
+            font-size: 24px;
+            color: #bdc3c7;
             opacity: 0;
-            margin-top: 10px;
-            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .example-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #f1c40f;
+            opacity: 0;
+            text-align: left;
+        }
+
+        .example-jp {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .example-np {
+            font-size: 18px;
+            color: #aaa;
         }
 
         .visible {
             opacity: 1;
+            transition: opacity 0.5s ease-in;
         }
 
         button {
-            margin-top: 20px;
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: bold;
+            margin-top: 25px;
+            padding: 12px 35px;
+            font-size: 18px;
             cursor: pointer;
-            background: #e94560;
+            background: #f1c40f;
             border: none;
-            color: white;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
-
-        button:active {
-            transform: scale(0.95);
+            color: #121212;
+            border-radius: 50px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -100,28 +112,43 @@
             <div id="timer-bar"></div>
         </div>
         
-        <div class="kanji-box" id="kanji-display">飲</div>
+        <div class="kanji-box" id="kanji-display">終</div>
         
         <div class="answer-area">
-            <div id="hiragana-display" class="hiragana">のみます</div>
-            <div id="nepali-display" class="nepali">पिउनु</div>
+            <div id="hiragana-display" class="hiragana">おわります</div>
+            <div id="nepali-display" class="nepali">सकिनु</div>
+            
+            <div id="example-display" class="example-box">
+                <span class="example-jp" id="ex-jp">今日（きょう）の仕事（しごと）が終わりました。</span>
+                <span class="example-np" id="ex-np">आजको काम सकियो।</span>
+            </div>
         </div>
 
-        <button onclick="nextKanji()">अर्को (Next)</button>
+        <button onclick="nextKanji()">अर्को कान्जी (Next)</button>
     </div>
 
     <script>
         const kanjiList = [
-            { k: "飲", h: "のみます", n: "पिउनु" },
-            { k: "会", h: "あいます", n: "भेट्नु" },
-            { k: "道", h: "みち", n: "बाटो" },
-            { k: "足", h: "あし", n: "खुट्टा" },
-            { k: "待", h: "まちます", n: "पर्खनु" },
-            { k: "送", h: "おくります", n: "पठाउनु" },
-            { k: "貸", h: "かします", n: "सापट दिनु" },
-            { k: "借", h: "かります", n: "सापट लिनु" },
-            { k: "始", h: "はじまります", n: "सुरु हुनु" },
-            { k: "終", h: "おわります", n: "सकिनु" }
+            { 
+                k: "終", h: "おわります", n: "सकिनु", 
+                ej: "今日の仕事が終わりました。", en: "आजको काम सकियो।" 
+            },
+            { 
+                k: "飲", h: "のみます", n: "पिउनु", 
+                ej: "水を飲みます。", en: "पानी पिउँछु।" 
+            },
+            { 
+                k: "待", h: "まちます", n: "पर्खनु", 
+                ej: "駅で友達を待ちます。", en: "स्टेसनमा साथीलाई पर्खन्छु।" 
+            },
+            { 
+                k: "始", h: "はじまります", n: "सुरु हुनु", 
+                ej: "会議が始まります。", en: "मिटिङ सुरु हुन्छ।" 
+            },
+            { 
+                k: "送", h: "おくります", n: "पठाउनु", 
+                ej: "手紙を送ります。", en: "चिठी पठाउँछु।" 
+            }
         ];
 
         let index = 0;
@@ -132,15 +159,15 @@
             timeLeft = 5;
             updateTimerBar();
             
-            // लुकाउने
+            // Result लुकाउने
             document.getElementById('hiragana-display').classList.remove('visible');
             document.getElementById('nepali-display').classList.remove('visible');
+            document.getElementById('example-display').classList.remove('visible');
 
             clearInterval(timer);
             timer = setInterval(() => {
                 timeLeft--;
                 updateTimerBar();
-                
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     showResult();
@@ -149,14 +176,14 @@
         }
 
         function updateTimerBar() {
-            const bar = document.getElementById('timer-bar');
             const percentage = (timeLeft / 5) * 100;
-            bar.style.width = percentage + "%";
+            document.getElementById('timer-bar').style.width = percentage + "%";
         }
 
         function showResult() {
             document.getElementById('hiragana-display').classList.add('visible');
             document.getElementById('nepali-display').classList.add('visible');
+            document.getElementById('example-display').classList.add('visible');
         }
 
         function nextKanji() {
@@ -164,6 +191,8 @@
             document.getElementById('kanji-display').innerText = kanjiList[index].k;
             document.getElementById('hiragana-display').innerText = kanjiList[index].h;
             document.getElementById('nepali-display').innerText = kanjiList[index].n;
+            document.getElementById('ex-jp').innerText = kanjiList[index].ej;
+            document.getElementById('ex-np').innerText = kanjiList[index].en;
             startChallenge();
         }
 

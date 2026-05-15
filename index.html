@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N4 Kanji Quiz - २० सेकेन्ड चुनौती</title>
+    <title>JLPT N4 Kanji - 5 Sec Flashcard</title>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle, #1e3c72 0%, #2a5298 100%);
+            background: #1a1a2e;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,99 +18,96 @@
         }
 
         #quiz-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: #16213e;
             padding: 40px;
-            border-radius: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 500px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 85%;
+            max-width: 450px;
             text-align: center;
+            border: 3px solid #0f3460;
         }
 
-        .timer-circle {
-            font-size: 22px;
-            font-weight: bold;
-            color: #ff4757;
-            background: white;
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
+        .timer-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #0f3460;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        #timer-bar {
+            width: 100%;
+            height: 100%;
+            background: #e94560;
+            transition: width 1s linear;
         }
 
         .kanji-box {
-            font-size: 150px;
+            font-size: 160px;
             font-weight: bold;
             color: #f1c40f;
-            text-shadow: 4px 4px 10px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-        }
-
-        .answer-container {
-            min-height: 120px;
-        }
-
-        .hiragana {
-            font-size: 45px;
-            color: #2ecc71;
-            font-weight: bold;
-            visibility: hidden;
             margin-bottom: 10px;
         }
 
+        .answer-area {
+            min-height: 130px;
+        }
+
+        .hiragana {
+            font-size: 50px;
+            color: #4ee44e;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
         .nepali {
-            font-size: 30px;
+            font-size: 32px;
             color: #ffffff;
-            visibility: hidden;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            padding-top: 10px;
+            opacity: 0;
+            margin-top: 10px;
+            font-style: italic;
         }
 
-        .show {
-            visibility: visible !important;
-            animation: popIn 0.5s ease-out;
-        }
-
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.5); }
-            100% { opacity: 1; transform: scale(1); }
+        .visible {
+            opacity: 1;
         }
 
         button {
-            margin-top: 25px;
-            padding: 12px 30px;
-            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
-            background: #f1c40f;
+            background: #e94560;
             border: none;
-            color: #2c3e50;
-            border-radius: 50px;
-            transition: 0.3s;
+            color: white;
+            border-radius: 10px;
+            transition: 0.2s;
         }
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+        button:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
     <div id="quiz-card">
-        <div class="timer-circle" id="timer">20</div>
+        <div class="timer-bar-container">
+            <div id="timer-bar"></div>
+        </div>
         
         <div class="kanji-box" id="kanji-display">飲</div>
         
-        <div class="answer-container">
+        <div class="answer-area">
             <div id="hiragana-display" class="hiragana">のみます</div>
             <div id="nepali-display" class="nepali">पिउनु</div>
         </div>
 
-        <button onclick="nextStep()">अर्को कान्जी (Next)</button>
+        <button onclick="nextKanji()">अर्को (Next)</button>
     </div>
 
     <script>
@@ -120,47 +117,57 @@
             { k: "道", h: "みち", n: "बाटो" },
             { k: "足", h: "あし", n: "खुट्टा" },
             { k: "待", h: "まちます", n: "पर्खनु" },
+            { k: "送", h: "おくります", n: "पठाउनु" },
             { k: "貸", h: "かします", n: "सापट दिनु" },
+            { k: "借", h: "かります", n: "सापट लिनु" },
             { k: "始", h: "はじまります", n: "सुरु हुनु" },
             { k: "終", h: "おわります", n: "सकिनु" }
         ];
 
         let index = 0;
-        let count = 5;
         let timer;
+        let timeLeft = 5;
 
-        function startTimer() {
-            count = 20;
-            document.getElementById('timer').innerText = count;
-            document.getElementById('hiragana-display').classList.remove('show');
-            document.getElementById('nepali-display').classList.remove('show');
+        function startChallenge() {
+            timeLeft = 5;
+            updateTimerBar();
+            
+            // लुकाउने
+            document.getElementById('hiragana-display').classList.remove('visible');
+            document.getElementById('nepali-display').classList.remove('visible');
 
             clearInterval(timer);
             timer = setInterval(() => {
-                count--;
-                document.getElementById('timer').innerText = count;
-                if (count <= 0) {
+                timeLeft--;
+                updateTimerBar();
+                
+                if (timeLeft <= 0) {
                     clearInterval(timer);
-                    revealAnswer();
+                    showResult();
                 }
             }, 1000);
         }
 
-        function revealAnswer() {
-            document.getElementById('hiragana-display').classList.add('show');
-            document.getElementById('nepali-display').classList.add('show');
+        function updateTimerBar() {
+            const bar = document.getElementById('timer-bar');
+            const percentage = (timeLeft / 5) * 100;
+            bar.style.width = percentage + "%";
         }
 
-        function nextStep() {
+        function showResult() {
+            document.getElementById('hiragana-display').classList.add('visible');
+            document.getElementById('nepali-display').classList.add('visible');
+        }
+
+        function nextKanji() {
             index = (index + 1) % kanjiList.length;
             document.getElementById('kanji-display').innerText = kanjiList[index].k;
             document.getElementById('hiragana-display').innerText = kanjiList[index].h;
             document.getElementById('nepali-display').innerText = kanjiList[index].n;
-            startTimer();
+            startChallenge();
         }
 
-        // Run on load
-        window.onload = startTimer;
+        window.onload = startChallenge;
     </script>
 </body>
 </html>

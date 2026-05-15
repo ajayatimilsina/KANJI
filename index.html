@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N4 Kanji Quiz - २० सेकेन्ड चुनौती</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+            overflow: hidden;
+        }
+
+        #quiz-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .timer-circle {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff4757;
+            background: white;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+        }
+
+        .kanji-box {
+            font-size: 150px;
+            font-weight: bold;
+            color: #f1c40f;
+            text-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .answer-container {
+            min-height: 120px;
+        }
+
+        .hiragana {
+            font-size: 45px;
+            color: #2ecc71;
+            font-weight: bold;
+            visibility: hidden;
+            margin-bottom: 10px;
+        }
+
+        .nepali {
+            font-size: 30px;
+            color: #ffffff;
+            visibility: hidden;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            padding-top: 10px;
+        }
+
+        .show {
+            visibility: visible !important;
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f1c40f;
+            border: none;
+            color: #2c3e50;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-card">
+        <div class="timer-circle" id="timer">20</div>
+        
+        <div class="kanji-box" id="kanji-display">飲</div>
+        
+        <div class="answer-container">
+            <div id="hiragana-display" class="hiragana">のみます</div>
+            <div id="nepali-display" class="nepali">पिउनु</div>
+        </div>
+
+        <button onclick="nextStep()">अर्को कान्जी (Next)</button>
+    </div>
+
+    <script>
+        const kanjiList = [
+            { k: "飲", h: "のみます", n: "पिउनु" },
+            { k: "会", h: "あいます", n: "भेट्नु" },
+            { k: "道", h: "みち", n: "बाटो" },
+            { k: "足", h: "あし", n: "खुट्टा" },
+            { k: "待", h: "まちます", n: "पर्खनु" },
+            { k: "貸", h: "かします", n: "सापट दिनु" },
+            { k: "始", h: "はじまります", n: "सुरु हुनु" },
+            { k: "終", h: "おわります", n: "सकिनु" }
+        ];
+
+        let index = 0;
+        let count = 5;
+        let timer;
+
+        function startTimer() {
+            count = 20;
+            document.getElementById('timer').innerText = count;
+            document.getElementById('hiragana-display').classList.remove('show');
+            document.getElementById('nepali-display').classList.remove('show');
+
+            clearInterval(timer);
+            timer = setInterval(() => {
+                count--;
+                document.getElementById('timer').innerText = count;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    revealAnswer();
+                }
+            }, 1000);
+        }
+
+        function revealAnswer() {
+            document.getElementById('hiragana-display').classList.add('show');
+            document.getElementById('nepali-display').classList.add('show');
+        }
+
+        function nextStep() {
+            index = (index + 1) % kanjiList.length;
+            document.getElementById('kanji-display').innerText = kanjiList[index].k;
+            document.getElementById('hiragana-display').innerText = kanjiList[index].h;
+            document.getElementById('nepali-display').innerText = kanjiList[index].n;
+            startTimer();
+        }
+
+        // Run on load
+        window.onload = startTimer;
+    </script>
+</body>
+</html>
